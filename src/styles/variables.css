@@ -1,0 +1,56 @@
+:root {
+  /* 粉色系主题 - 默认 */
+  --color-primary: #FF69B4;
+  --color-secondary: #FFB6C1;
+  --color-background-top: #FFE4E8;
+  --color-background-bottom: #FFF5EE;
+  --color-particle: #FFC0CB;
+  --color-ground: rgba(255, 182, 193, 0.6);
+  
+  /* 文字颜色 */
+  --color-text-primary: #333333;
+  --color-text-secondary: #666666;
+  --color-text-light: #999999;
+  
+  /* 间距 */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  
+  /* 字体 */
+  --font-family-base: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  
+  /* 圆角 */
+  --border-radius-sm: 4px;
+  --border-radius-md: 8px;
+  --border-radius-lg: 16px;
+  
+  /* 过渡 */
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.3s ease;
+  --transition-slow: 0.5s ease;
+}
+
+/* 蓝色系主题 */
+[data-theme="blue"] {
+  --color-primary: #4169E1;
+  --color-secondary: #87CEEB;
+  --color-background-top: #E6F3FF;
+  --color-background-bottom: #F0F8FF;
+  --color-particle: #B0E0E6;
+  --color-ground: rgba(135, 206, 235, 0.6);
+}
+
+/* 紫色系主题 */
+[data-theme="purple"] {
+  --color-primary: #9370DB;
+  --color-secondary: #DDA0DD;
+  --color-background-top: #F5F0FF;
+  --color-background-bottom: #FAF5FF;
+  --color-particle: #E6E6FA;
+  --color-ground: rgba(221, 160, 221, 0.6);
+}

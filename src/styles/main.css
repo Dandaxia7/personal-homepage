@@ -1,0 +1,209 @@
+@import './variables.css';
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+  font-family: var(--font-family-base);
+  scroll-behavior: smooth;
+}
+
+body {
+  background: linear-gradient(
+    to bottom,
+    var(--color-background-top) 0%,
+    var(--color-background-bottom) 100%
+  );
+  background-attachment: fixed;
+}
+
+#app {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+/* 滚动容器 */
+#scroll-container {
+  width: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  scroll-snap-type: y proximity;
+  scroll-behavior: smooth;
+}
+
+/* 滚动区域 */
+.scroll-section {
+  width: 100%;
+  height: 100vh;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+
+/* Canvas 容器 - 固定为背景 */
+#canvas-container {
+  width: 100%;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 0;
+}
+
+#canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  outline: none;
+}
+
+/* 加载界面 */
+#loading-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(
+    to bottom,
+    var(--color-background-top) 0%,
+    var(--color-background-bottom) 100%
+  );
+  z-index: 1000;
+  transition: opacity 0.5s ease;
+}
+
+#loading-screen.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.loading-content {
+  text-align: center;
+}
+
+.loading-title {
+  font-size: 24px;
+  color: var(--color-primary);
+  margin-bottom: var(--spacing-lg);
+  font-weight: 600;
+}
+
+.loading-progress-container {
+  width: 300px;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: var(--border-radius-lg);
+  overflow: hidden;
+  margin-bottom: var(--spacing-md);
+}
+
+.loading-progress-bar {
+  width: 0%;
+  height: 100%;
+  background: var(--color-primary);
+  border-radius: var(--border-radius-lg);
+  transition: width 0.3s ease;
+}
+
+.loading-percent {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+}
+
+.loading-tip {
+  margin-top: var(--spacing-lg);
+  font-size: 12px;
+  color: var(--color-text-light);
+}
+
+/* 滚动箭头 */
+.scroll-arrow {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--color-primary);
+  opacity: 0;
+  transition: all 0.3s ease;
+  z-index: 100;
+}
+
+.scroll-arrow:hover {
+  transform: translateX(-50%) scale(1.2);
+  filter: drop-shadow(0 0 8px var(--color-primary));
+}
+
+.scroll-arrow-up {
+  top: 20px;
+}
+
+.scroll-arrow-down {
+  bottom: 20px;
+}
+
+/* 区域内容样式 */
+.section-content {
+  max-width: 800px;
+  width: 90%;
+  padding: var(--spacing-xl);
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  border-radius: var(--border-radius-xl);
+  box-shadow: 0 8px 32px rgba(255, 105, 180, 0.15);
+  z-index: 2;
+}
+
+/* 区域背景遮罩 - 卡片外的毛玻璃效果 */
+.section-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(4px);
+  z-index: 1;
+}
+
+.section-title {
+  font-size: 32px;
+  color: var(--color-primary);
+  margin-bottom: var(--spacing-xl);
+  text-align: center;
+  font-weight: 600;
+}
+
+.about-content,
+.projects-content {
+  font-size: 16px;
+  line-height: 1.8;
+  color: var(--color-text-primary);
+}
+
+.about-text,
+.projects-text {
+  margin-bottom: var(--spacing-md);
+  text-align: center;
+}

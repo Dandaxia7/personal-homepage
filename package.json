@@ -1,0 +1,23 @@
+{
+  "name": "three-app",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "deploy": "npm run build && gh-pages -d dist"
+  },
+  "devDependencies": {
+    "@types/three": "^0.184.1",
+    "gh-pages": "^6.3.0",
+    "typescript": "^7.0.2",
+    "vite": "^7.2.4"
+  },
+  "dependencies": {
+    "@types/dat.gui": "^0.7.10",
+    "dat.gui": "^0.7.9",
+    "three": "^0.185.1"
+  }
+}

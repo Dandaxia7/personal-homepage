@@ -13,6 +13,7 @@ export class ClickHandler {
   private cooldown: boolean = false;
   private readonly cooldownTime: number = 500; // 冷却时间（毫秒）
   private onModelClickCallback: (() => void) | null = null;
+  private readonly boundOnClick = this.onClick.bind(this);
 
   constructor(camera: THREE.Camera, target: THREE.Object3D) {
     this.camera = camera;
@@ -32,7 +33,7 @@ export class ClickHandler {
    * 绑定事件监听
    */
   private bindEvents(): void {
-    window.addEventListener('click', this.onClick.bind(this));
+    window.addEventListener('click', this.boundOnClick);
   }
 
   /**
@@ -87,7 +88,7 @@ export class ClickHandler {
    * 清理资源
    */
   dispose(): void {
-    window.removeEventListener('click', this.onClick.bind(this));
+    window.removeEventListener('click', this.boundOnClick);
     this.bounceAnimation.stop();
   }
 }

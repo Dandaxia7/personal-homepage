@@ -14,6 +14,7 @@ export class MouseTracker {
   private readonly maxXRotation = Math.PI / 18; // ±10° (向上角度更小，因为模型底部是平的)
   private readonly maxYRotation = Math.PI / 4;  // ±45°
   private readonly lerpFactor = 0.08;            // 插值系数
+  private readonly boundOnMouseMove = this.onMouseMove.bind(this);
 
   constructor(target: THREE.Object3D) {
     this.target = target;
@@ -28,7 +29,7 @@ export class MouseTracker {
    * 绑定事件监听
    */
   private bindEvents(): void {
-    window.addEventListener('mousemove', this.onMouseMove.bind(this));
+    window.addEventListener('mousemove', this.boundOnMouseMove);
   }
 
   /**
@@ -87,6 +88,6 @@ export class MouseTracker {
    * 清理资源
    */
   dispose(): void {
-    window.removeEventListener('mousemove', this.onMouseMove.bind(this));
+    window.removeEventListener('mousemove', this.boundOnMouseMove);
   }
 }

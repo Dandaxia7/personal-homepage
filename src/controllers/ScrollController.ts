@@ -27,6 +27,9 @@ export class ScrollController {
   private downArrow: HTMLElement;
   private arrowVisibilityTimeout: number | null = null;
   private sectionChangeCallbacks: SectionChangeCallback[] = [];
+  private readonly boundHandleWheel = this.handleWheel.bind(this);
+  private readonly boundHandleScroll = this.handleScroll.bind(this);
+  private readonly boundHandleMouseMove = this.handleMouseMove.bind(this);
 
   constructor() {
     this.container = document.getElementById('scroll-container')!;
@@ -77,9 +80,9 @@ export class ScrollController {
   }
 
   private bindEvents(): void {
-    this.container.addEventListener('wheel', this.handleWheel.bind(this), { passive: false });
-    this.container.addEventListener('scroll', this.handleScroll.bind(this), { passive: true });
-    window.addEventListener('mousemove', this.handleMouseMove.bind(this));
+    this.container.addEventListener('wheel', this.boundHandleWheel, { passive: false });
+    this.container.addEventListener('scroll', this.boundHandleScroll, { passive: true });
+    window.addEventListener('mousemove', this.boundHandleMouseMove);
   }
 
   onSectionChange(callback: SectionChangeCallback): void {
@@ -210,9 +213,9 @@ export class ScrollController {
   }
 
   dispose(): void {
-    this.container.removeEventListener('wheel', this.handleWheel.bind(this));
-    this.container.removeEventListener('scroll', this.handleScroll.bind(this));
-    window.removeEventListener('mousemove', this.handleMouseMove.bind(this));
+    this.container.removeEventListener('wheel', this.boundHandleWheel);
+    this.container.removeEventListener('scroll', this.boundHandleScroll);
+    window.removeEventListener('mousemove', this.boundHandleMouseMove);
 
     if (this.arrowVisibilityTimeout) {
       clearTimeout(this.arrowVisibilityTimeout);

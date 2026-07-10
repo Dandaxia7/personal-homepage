@@ -26,6 +26,7 @@ export class EyeTracker {
   private leftEyeOffset: THREE.Vector3 = new THREE.Vector3();
   private rightEyeOffset: THREE.Vector3 = new THREE.Vector3();
   private targetOffset: THREE.Vector3 = new THREE.Vector3();
+  private readonly boundOnMouseMove = this.onMouseMove.bind(this);
 
   constructor(model: THREE.Object3D) {
     this.model = model;
@@ -134,7 +135,7 @@ export class EyeTracker {
    * 绑定鼠标事件
    */
   private bindEvents(): void {
-    window.addEventListener('mousemove', this.onMouseMove.bind(this));
+    window.addEventListener('mousemove', this.boundOnMouseMove);
   }
 
   /**
@@ -208,7 +209,7 @@ export class EyeTracker {
    * 清理资源
    */
   dispose(): void {
-    window.removeEventListener('mousemove', this.onMouseMove.bind(this));
+    window.removeEventListener('mousemove', this.boundOnMouseMove);
     
     if (this.leftEyeBall) {
       this.leftEyeBall.geometry.dispose();

@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>个人主页</title>
+    <script type="module" crossorigin src="/personal-homepage/assets/index-YE8C6xs1.js"></script>
+    <link rel="stylesheet" crossorigin href="/personal-homepage/assets/index-B0ofj5E7.css">
+  </head>
+  <body>
+    <div id="app">
+      <!-- 加载界面 -->
+      <div id="loading-screen">
+        <div class="loading-content">
+          <h1 class="loading-title">加载中...</h1>
+          <div class="loading-progress-container">
+            <div class="loading-progress-bar"></div>
+          </div>
+          <div class="loading-percent">0%</div>
+          <p class="loading-tip">正在加载 3D 模型，请稍候...</p>
+        </div>
+      </div>
+      
+      <!-- 滚动容器 -->
+      <div id="scroll-container">
+        <!-- 区域1: 3D展示场景 -->
+        <section id="scene-section" class="scroll-section">
+          <div id="canvas-container">
+            <canvas id="canvas"></canvas>
+          </div>
+          <!-- 向下箭头 -->
+          <div id="scroll-arrow-down" class="scroll-arrow scroll-arrow-down">
+            <svg width="40" height="40" viewBox="0 0 40 40">
+              <path d="M10 15 L20 25 L30 15" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        </section>
+        
+        <!-- 区域2: 个人简介 -->
+        <section id="about-section" class="scroll-section">
+          <!-- 背景遮罩 - 毛玻璃效果 -->
+          <div class="section-backdrop"></div>
+          <div class="section-content">
+            <h2 class="section-title">关于我</h2>
+            <div class="about-content">
+              <p class="about-text">欢迎来到我的个人主页！</p>
+              <p class="about-text">这里将展示个人简介内容...</p>
+            </div>
+          </div>
+          <!-- 向上箭头 -->
+          <div id="scroll-arrow-up" class="scroll-arrow scroll-arrow-up">
+            <svg width="40" height="40" viewBox="0 0 40 40">
+              <path d="M10 25 L20 15 L30 25" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <!-- 向下箭头 -->
+          <div id="scroll-arrow-down-2" class="scroll-arrow scroll-arrow-down">
+            <svg width="40" height="40" viewBox="0 0 40 40">
+              <path d="M10 15 L20 25 L30 15" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        </section>
+        
+        <!-- 区域3: 项目展示 -->
+        <section id="projects-section" class="scroll-section">
+          <!-- 背景遮罩 - 毛玻璃效果 -->
+          <div class="section-backdrop"></div>
+          <div class="section-content">
+            <h2 class="section-title">项目展示</h2>
+            <div class="projects-content">
+              <p class="projects-text">这里将展示我的项目作品...</p>
+            </div>
+          </div>
+          <!-- 向上箭头 -->
+          <div id="scroll-arrow-up-2" class="scroll-arrow scroll-arrow-up">
+            <svg width="40" height="40" viewBox="0 0 40 40">
+              <path d="M10 25 L20 15 L30 25" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        </section>
+      </div>
+    </div>
+    
+  </body>
+</html>

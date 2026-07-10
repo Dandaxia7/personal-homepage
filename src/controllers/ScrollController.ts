@@ -9,26 +9,35 @@ export interface ScrollSection {
   index: number;
 }
 
+type SectionChangeCallback = (index: number, sectionId: string) => void;
+
+const ARROW_SVG = {
+  up: '<path d="M10 25 L20 15 L30 25" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>',
+  down: '<path d="M10 15 L20 25 L30 15" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>',
+};
+
 export class ScrollController {
   private container: HTMLElement;
   private sections: ScrollSection[] = [];
-  private currentSectionIndex: number = 0;
-  private isScrolling: boolean = false;
-  private scrollThreshold: number = 30; // 滚动阈值（像素）- 降低以更灵敏
-  private accumulatedScroll: number = 0;
-  private arrows: Map<string, HTMLElement> = new Map();
+  private currentSectionIndex = 0;
+  private isScrolling = false;
+  private scrollThreshold = 30;
+  private accumulatedScroll = 0;
+  private upArrow: HTMLElement;
+  private downArrow: HTMLElement;
   private arrowVisibilityTimeout: number | null = null;
+  private sectionChangeCallbacks: SectionChangeCallback[] = [];
 
   constructor() {
     this.container = document.getElementById('scroll-container')!;
     this.initSections();
-    this.initArrows();
+    const arrows = this.createFixedArrows();
+    this.upArrow = arrows.up;
+    this.downArrow = arrows.down;
     this.bindEvents();
+    this.notifySectionChange();
   }
 
-  /**
-   * 初始化所有区域
-   */
   private initSections(): void {
     const sectionElements = this.container.querySelectorAll('.scroll-section');
     sectionElements.forEach((element, index) => {
@@ -36,49 +45,55 @@ export class ScrollController {
       this.sections.push({
         id: section.id,
         element: section,
-        index
+        index,
       });
     });
   }
 
-  /**
-   * 初始化箭头元素
-   */
-  private initArrows(): void {
-    const arrowElements = this.container.querySelectorAll('.scroll-arrow');
-    arrowElements.forEach((element) => {
-      const arrow = element as HTMLElement;
-      const id = arrow.id;
-      this.arrows.set(id, arrow);
-      
-      // 初始隐藏
-      arrow.style.opacity = '0';
-      arrow.style.pointerEvents = 'none';
-      
-      // 绑定点击事件
-      arrow.addEventListener('click', () => this.handleArrowClick(arrow));
-    });
+  /** 创建固定定位的上下箭头，避免被 section 毛玻璃层遮挡 */
+  private createFixedArrows(): { up: HTMLElement; down: HTMLElement } {
+    const layer = document.createElement('div');
+    layer.id = 'scroll-arrows';
+    layer.className = 'scroll-arrows-layer';
+    layer.setAttribute('aria-hidden', 'true');
+
+    const up = document.createElement('button');
+    up.className = 'scroll-arrow scroll-arrow-up';
+    up.setAttribute('aria-label', '向上滚动');
+    up.innerHTML = `<svg width="40" height="40" viewBox="0 0 40 40">${ARROW_SVG.up}</svg>`;
+
+    const down = document.createElement('button');
+    down.className = 'scroll-arrow scroll-arrow-down';
+    down.setAttribute('aria-label', '向下滚动');
+    down.innerHTML = `<svg width="40" height="40" viewBox="0 0 40 40">${ARROW_SVG.down}</svg>`;
+
+    layer.append(up, down);
+    document.body.appendChild(layer);
+
+    up.addEventListener('click', () => this.scrollToSection(this.currentSectionIndex - 1));
+    down.addEventListener('click', () => this.scrollToSection(this.currentSectionIndex + 1));
+
+    return { up, down };
   }
 
-  /**
-   * 绑定事件监听器
-   */
   private bindEvents(): void {
-    // 监听滚轮事件
-    window.addEventListener('wheel', this.handleWheel.bind(this), { passive: false });
-    
-    // 监听鼠标移动（用于箭头显示）
+    this.container.addEventListener('wheel', this.handleWheel.bind(this), { passive: false });
+    this.container.addEventListener('scroll', this.handleScroll.bind(this), { passive: true });
     window.addEventListener('mousemove', this.handleMouseMove.bind(this));
-    
-    // 监听滚动结束
-    window.addEventListener('scroll', this.handleScroll.bind(this));
   }
 
-  /**
-   * 处理滚轮事件
-   */
+  onSectionChange(callback: SectionChangeCallback): void {
+    this.sectionChangeCallbacks.push(callback);
+  }
+
+  scrollToSectionById(sectionId: string): void {
+    const section = this.sections.find((s) => s.id === sectionId);
+    if (section) {
+      this.scrollToSection(section.index);
+    }
+  }
+
   private handleWheel(event: WheelEvent): void {
-    // 如果正在滚动动画中，阻止新的滚动
     if (this.isScrolling) {
       event.preventDefault();
       return;
@@ -87,131 +102,75 @@ export class ScrollController {
     const delta = event.deltaY;
     this.accumulatedScroll += delta;
 
-    // 超过阈值时切换区域（阻止默认滚动，触发吸附）
     if (Math.abs(this.accumulatedScroll) >= this.scrollThreshold) {
       event.preventDefault();
-      
+
       const direction = this.accumulatedScroll > 0 ? 1 : -1;
       const targetIndex = this.currentSectionIndex + direction;
 
-      // 检查是否在有效范围内
       if (targetIndex >= 0 && targetIndex < this.sections.length) {
         this.scrollToSection(targetIndex);
       }
 
       this.accumulatedScroll = 0;
     }
-    // 未达阈值时：允许默认滚动行为（不调用 preventDefault）
-    // 页面会进行正常的缓慢滚动
   }
 
-  /**
-   * 处理滚动事件
-   */
   private handleScroll(): void {
-    // 检测当前可见区域
-    const windowHeight = window.innerHeight;
-    
+    const containerHeight = this.container.clientHeight;
+
     this.sections.forEach((section, index) => {
       const rect = section.element.getBoundingClientRect();
-      const isVisible = rect.top < windowHeight && rect.bottom > 0;
-      
-      if (isVisible && Math.abs(rect.top) < windowHeight / 2) {
-        this.currentSectionIndex = index;
+      const containerRect = this.container.getBoundingClientRect();
+      const relativeTop = rect.top - containerRect.top;
+
+      if (Math.abs(relativeTop) < containerHeight / 2) {
+        if (this.currentSectionIndex !== index) {
+          this.currentSectionIndex = index;
+          this.notifySectionChange();
+        }
       }
     });
   }
 
-  /**
-   * 处理鼠标移动
-   */
   private handleMouseMove(event: MouseEvent): void {
     const mouseY = event.clientY;
     const windowHeight = window.innerHeight;
-    const threshold = 100; // 距离边缘100px内显示箭头
+    const threshold = 100;
 
-    // 清除之前的定时器
     if (this.arrowVisibilityTimeout) {
       clearTimeout(this.arrowVisibilityTimeout);
     }
 
-    // 显示/隐藏箭头
     this.updateArrowVisibility(mouseY, windowHeight, threshold);
 
-    // 3秒后隐藏箭头
     this.arrowVisibilityTimeout = window.setTimeout(() => {
       this.hideAllArrows();
     }, 3000);
   }
 
-  /**
-   * 更新箭头可见性
-   */
   private updateArrowVisibility(mouseY: number, windowHeight: number, threshold: number): void {
     const nearTop = mouseY < threshold;
     const nearBottom = mouseY > windowHeight - threshold;
+    const currentIndex = this.currentSectionIndex;
 
-    // 根据当前区域显示对应箭头
-    if (this.currentSectionIndex === 0) {
-      // 第一个区域：只显示向下箭头
-      this.showArrow('scroll-arrow-down', nearBottom);
-    } else if (this.currentSectionIndex === this.sections.length - 1) {
-      // 最后一个区域：只显示向上箭头
-      const arrowId = `scroll-arrow-up${this.sections.length > 2 ? '-2' : ''}`;
-      this.showArrow(arrowId, nearTop);
-    } else {
-      // 中间区域：显示向上和向下箭头
-      const upArrowId = this.currentSectionIndex === 1 ? 'scroll-arrow-up' : 'scroll-arrow-up-2';
-      const downArrowId = 'scroll-arrow-down-2';
-      
-      this.showArrow(upArrowId, nearTop);
-      this.showArrow(downArrowId, nearBottom);
-    }
+    const showUp = nearTop && currentIndex > 0;
+    const showDown = nearBottom && currentIndex < this.sections.length - 1;
+
+    this.setArrowVisible(this.upArrow, showUp);
+    this.setArrowVisible(this.downArrow, showDown);
   }
 
-  /**
-   * 显示箭头
-   */
-  private showArrow(arrowId: string, show: boolean): void {
-    const arrow = this.arrows.get(arrowId);
-    if (!arrow) return;
-
-    if (show) {
-      arrow.style.opacity = '1';
-      arrow.style.pointerEvents = 'auto';
-    } else {
-      arrow.style.opacity = '0';
-      arrow.style.pointerEvents = 'none';
-    }
+  private setArrowVisible(arrow: HTMLElement, show: boolean): void {
+    arrow.classList.toggle('visible', show);
   }
 
-  /**
-   * 隐藏所有箭头
-   */
   private hideAllArrows(): void {
-    this.arrows.forEach((arrow) => {
-      arrow.style.opacity = '0';
-      arrow.style.pointerEvents = 'none';
-    });
+    this.setArrowVisible(this.upArrow, false);
+    this.setArrowVisible(this.downArrow, false);
   }
 
-  /**
-   * 处理箭头点击
-   */
-  private handleArrowClick(arrow: HTMLElement): void {
-    const isDownArrow = arrow.classList.contains('scroll-arrow-down');
-    const direction = isDownArrow ? 1 : -1;
-    const targetIndex = this.currentSectionIndex + direction;
-
-    if (targetIndex >= 0 && targetIndex < this.sections.length) {
-      this.scrollToSection(targetIndex);
-    }
-  }
-
-  /**
-   * 滚动到指定区域
-   */
-  private scrollToSection(index: number): void {
+  scrollToSection(index: number): void {
     if (this.isScrolling || index < 0 || index >= this.sections.length) {
       return;
     }
@@ -221,36 +180,44 @@ export class ScrollController {
 
     targetSection.element.scrollIntoView({
       behavior: 'smooth',
-      block: 'start'
+      block: 'start',
     });
 
-    // 更新当前区域索引
     this.currentSectionIndex = index;
+    this.notifySectionChange();
 
-    // 滚动动画结束后重置状态（延长到1200ms让切换更慢更平滑）
     setTimeout(() => {
       this.isScrolling = false;
       this.accumulatedScroll = 0;
     }, 1200);
   }
 
-  /**
-   * 获取当前区域索引
-   */
-  public getCurrentSectionIndex(): number {
+  private notifySectionChange(): void {
+    const section = this.sections[this.currentSectionIndex];
+    if (!section) return;
+
+    this.sectionChangeCallbacks.forEach((cb) => {
+      cb(this.currentSectionIndex, section.id);
+    });
+  }
+
+  getCurrentSectionIndex(): number {
     return this.currentSectionIndex;
   }
 
-  /**
-   * 销毁控制器
-   */
-  public dispose(): void {
-    window.removeEventListener('wheel', this.handleWheel.bind(this));
+  getCurrentSectionId(): string {
+    return this.sections[this.currentSectionIndex]?.id ?? '';
+  }
+
+  dispose(): void {
+    this.container.removeEventListener('wheel', this.handleWheel.bind(this));
+    this.container.removeEventListener('scroll', this.handleScroll.bind(this));
     window.removeEventListener('mousemove', this.handleMouseMove.bind(this));
-    window.removeEventListener('scroll', this.handleScroll.bind(this));
-    
+
     if (this.arrowVisibilityTimeout) {
       clearTimeout(this.arrowVisibilityTimeout);
     }
+
+    document.getElementById('scroll-arrows')?.remove();
   }
 }

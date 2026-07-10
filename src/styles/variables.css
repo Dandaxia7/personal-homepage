@@ -28,6 +28,7 @@
   --border-radius-sm: 4px;
   --border-radius-md: 8px;
   --border-radius-lg: 16px;
+  --border-radius-xl: 24px;
   
   /* 过渡 */
   --transition-fast: 0.15s ease;

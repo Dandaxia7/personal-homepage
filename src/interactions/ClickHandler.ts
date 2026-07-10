@@ -12,6 +12,7 @@ export class ClickHandler {
   private bounceAnimation: BounceAnimation;
   private cooldown: boolean = false;
   private readonly cooldownTime: number = 500; // 冷却时间（毫秒）
+  private onModelClickCallback: (() => void) | null = null;
 
   constructor(camera: THREE.Camera, target: THREE.Object3D) {
     this.camera = camera;
@@ -56,6 +57,10 @@ export class ClickHandler {
     }
   }
 
+  setOnModelClick(callback: () => void): void {
+    this.onModelClickCallback = callback;
+  }
+
   /**
    * 模型被点击
    */
@@ -68,6 +73,7 @@ export class ClickHandler {
 
     // 播放弹跳动画
     this.bounceAnimation.play();
+    this.onModelClickCallback?.();
   }
 
   /**

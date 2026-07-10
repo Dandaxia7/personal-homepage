@@ -120,6 +120,10 @@ export class AvatarScene extends SceneBase {
     }
   }
 
+  setOnModelClick(callback: () => void): void {
+    this.clickHandler?.setOnModelClick(callback);
+  }
+
   /**
    * 清理资源
    */

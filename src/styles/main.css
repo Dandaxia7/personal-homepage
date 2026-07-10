@@ -403,12 +403,11 @@ body {
 }
 
 .tech-timeline-host {
-  overflow-x: auto;
+  overflow: visible;
 }
 
 .tech-timeline-svg {
   width: 100%;
-  min-width: 520px;
   height: auto;
   display: block;
 }
@@ -435,7 +434,7 @@ body {
 
 .tech-timeline-date,
 .tech-timeline-title {
-  text-anchor: middle;
+  text-anchor: start;
   font-size: 11px;
   fill: var(--color-text-secondary);
 }
@@ -978,23 +977,29 @@ body {
 
 .quick-nav-btn {
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
   width: 50px;
   height: 50px;
   padding: 0;
   background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 105, 180, 0.2);
-  border-radius: 50%;
+  border-radius: 25px;
   cursor: pointer;
-  overflow: visible;
+  overflow: hidden;
   transition: all var(--transition-normal);
   box-shadow: 0 4px 16px rgba(255, 105, 180, 0.15);
 }
 
 .quick-nav-btn:hover,
 .quick-nav-btn.active {
-  width: 120px;
-  border-radius: 25px;
+  width: auto;
+  max-width: 96px;
+  padding: 0 14px 0 12px;
+  justify-content: flex-end;
   background: rgba(255, 255, 255, 0.95);
   box-shadow: 0 4px 20px rgba(255, 105, 180, 0.3);
   animation: glow-pulse 2s ease-in-out infinite;
@@ -1005,10 +1010,7 @@ body {
 }
 
 .quick-nav-icon {
-  position: absolute;
-  top: 50%;
-  right: 17px;
-  transform: translateY(-50%);
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1025,13 +1027,10 @@ body {
 
 .quick-nav-label {
   display: none;
-  position: absolute;
-  top: 50%;
-  right: 37px;
-  transform: translateY(-50%);
   font-size: 13px;
   color: var(--color-text-primary);
   white-space: nowrap;
+  line-height: 1;
 }
 
 .quick-nav-btn:hover .quick-nav-label,
@@ -1148,11 +1147,9 @@ body {
   .quick-nav-btn:hover,
   .quick-nav-btn.active {
     width: 44px;
+    max-width: 44px;
+    padding: 0;
     border-radius: 50%;
-  }
-
-  .quick-nav-icon {
-    right: 14px;
   }
 
   .quick-nav-label {

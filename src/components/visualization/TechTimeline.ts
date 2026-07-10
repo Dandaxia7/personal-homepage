@@ -1,5 +1,10 @@
 import { TechMilestone, techMilestones } from '../../data/skills';
 
+const LINE_X = 14;
+const TEXT_X = 30;
+const NODE_GAP = 56;
+const PADDING_Y = 20;
+
 export class TechTimeline {
   private container: HTMLElement;
   private svg: SVGSVGElement;
@@ -7,6 +12,7 @@ export class TechTimeline {
   private milestones: TechMilestone[];
   private hasAnimated = false;
   private observer: IntersectionObserver;
+  private resizeObserver: ResizeObserver | null = null;
 
   constructor(container: HTMLElement, milestones: TechMilestone[] = techMilestones) {
     this.container = container;
@@ -34,27 +40,39 @@ export class TechTimeline {
       { threshold: 0.35 }
     );
     this.observer.observe(this.container);
+
+    if ('ResizeObserver' in window) {
+      this.resizeObserver = new ResizeObserver(() => this.render());
+      this.resizeObserver.observe(this.container);
+    }
   }
 
   private render(): void {
-    const width = 720;
-    const height = 160;
-    const padding = 36;
-    const step = (width - padding * 2) / Math.max(this.milestones.length - 1, 1);
+    const width = Math.max(this.container.clientWidth, 220);
+    const count = this.milestones.length;
+    const height =
+      count <= 1
+        ? PADDING_Y * 2 + 40
+        : PADDING_Y * 2 + NODE_GAP * (count - 1);
 
     this.svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
     this.svg.innerHTML = '';
 
+    if (count === 0) return;
+
+    const firstY = PADDING_Y;
+    const lastY = count <= 1 ? firstY : PADDING_Y + NODE_GAP * (count - 1);
+
     const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-    line.setAttribute('x1', String(padding));
-    line.setAttribute('y1', String(height / 2));
-    line.setAttribute('x2', String(width - padding));
-    line.setAttribute('y2', String(height / 2));
+    line.setAttribute('x1', String(LINE_X));
+    line.setAttribute('y1', String(firstY));
+    line.setAttribute('x2', String(LINE_X));
+    line.setAttribute('y2', String(lastY));
     line.classList.add('tech-timeline-line');
     this.svg.appendChild(line);
 
     this.milestones.forEach((item, index) => {
-      const x = padding + step * index;
+      const y = count <= 1 ? firstY : PADDING_Y + NODE_GAP * index;
       const group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
       group.classList.add('tech-timeline-node');
       group.setAttribute('tabindex', '0');
@@ -62,20 +80,20 @@ export class TechTimeline {
       group.dataset.index = String(index);
 
       const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-      circle.setAttribute('cx', String(x));
-      circle.setAttribute('cy', String(height / 2));
+      circle.setAttribute('cx', String(LINE_X));
+      circle.setAttribute('cy', String(y));
       circle.setAttribute('r', '6');
       circle.classList.add('tech-timeline-dot');
 
       const date = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-      date.setAttribute('x', String(x));
-      date.setAttribute('y', String(height / 2 - 22));
+      date.setAttribute('x', String(TEXT_X));
+      date.setAttribute('y', String(y - 2));
       date.classList.add('tech-timeline-date');
       date.textContent = item.date;
 
       const title = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-      title.setAttribute('x', String(x));
-      title.setAttribute('y', String(height / 2 + 28));
+      title.setAttribute('x', String(TEXT_X));
+      title.setAttribute('y', String(y + 14));
       title.classList.add('tech-timeline-title');
       title.textContent = item.title;
 
@@ -92,6 +110,10 @@ export class TechTimeline {
         this.detailCard.hidden = true;
       });
     });
+
+    if (this.hasAnimated) {
+      this.applyDrawnState();
+    }
   }
 
   private showDetail(item: TechMilestone): void {
@@ -111,7 +133,7 @@ export class TechTimeline {
     const line = this.svg.querySelector('.tech-timeline-line') as SVGLineElement | null;
     if (!line) return;
 
-    const length = line.getTotalLength?.() ?? 640;
+    const length = line.getTotalLength?.() ?? 200;
     line.style.strokeDasharray = `${length}`;
     line.style.strokeDashoffset = `${length}`;
     line.getBoundingClientRect();
@@ -128,8 +150,19 @@ export class TechTimeline {
     });
   }
 
+  private applyDrawnState(): void {
+    const line = this.svg.querySelector('.tech-timeline-line') as SVGLineElement | null;
+    if (line) {
+      line.style.strokeDashoffset = '0';
+    }
+    this.svg.querySelectorAll('.tech-timeline-node').forEach((node) => {
+      (node as SVGGElement).style.opacity = '1';
+    });
+  }
+
   dispose(): void {
     this.observer.disconnect();
+    this.resizeObserver?.disconnect();
     this.container.replaceChildren();
   }
 }

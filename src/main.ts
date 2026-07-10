@@ -5,6 +5,7 @@ import { QuickNav } from './ui/QuickNav';
 import { ScrollHint } from './ui/ScrollHint';
 import { DialogueManager } from './interactions/DialogueManager';
 import { SkillsSection } from './components/sections/SkillsSection';
+import { ProjectsSection } from './components/sections/ProjectsSection';
 
 const canvas = document.getElementById('canvas') as HTMLCanvasElement;
 
@@ -27,6 +28,8 @@ new SkillsSection((tagName) => {
   scrollController.scrollToSectionById('projects-section');
   window.dispatchEvent(new CustomEvent('project-filter', { detail: tagName }));
 });
+
+new ProjectsSection();
 
 scrollController.onSectionChange((_index, sectionId) => {
   const onHero = sectionId === 'scene-section';

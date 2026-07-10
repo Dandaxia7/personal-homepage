@@ -4,6 +4,9 @@
 
 这是一个基于 Three.js 构建的 3D 虚拟形象展示应用，支持加载和渲染 GLB 格式的 3D 模型。项目采用现代化的前端技术栈，提供了流畅的 3D 渲染体验和友好的用户交互界面。
 
+### Github地址
+- https://dandaxia7.github.io/personal-homepage/
+
 ### 技术栈
 
 - **Three.js** - 3D 渲染引擎

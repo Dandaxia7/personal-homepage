@@ -6,6 +6,7 @@ import { ScrollHint } from './ui/ScrollHint';
 import { DialogueManager } from './interactions/DialogueManager';
 import { SkillsSection } from './components/sections/SkillsSection';
 import { ProjectsSection } from './components/sections/ProjectsSection';
+import { AboutSection } from './components/sections/AboutSection';
 
 const canvas = document.getElementById('canvas') as HTMLCanvasElement;
 
@@ -31,12 +32,17 @@ new SkillsSection((tagName) => {
 
 new ProjectsSection();
 
+const aboutSection = new AboutSection();
+
 scrollController.onSectionChange((_index, sectionId) => {
   const onHero = sectionId === 'scene-section';
   scene.setHeroInteractionEnabled(onHero);
   quickNav.setActiveSection(sectionId);
   dialogueManager.onSectionChange(sectionId);
   scrollHint.setVisible(onHero);
+  if (sectionId === 'about-section') {
+    aboutSection.onSectionEnter();
+  }
 });
 
 scene.init().then(() => {

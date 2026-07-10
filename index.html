@@ -4,8 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>个人主页</title>
-    <script type="module" crossorigin src="/personal-homepage/assets/index-CWL7BOv2.js"></script>
-    <link rel="stylesheet" crossorigin href="/personal-homepage/assets/index-B0ofj5E7.css">
+    <script type="module" crossorigin src="/personal-homepage/assets/index-BMv36gRc.js"></script>
+    <link rel="stylesheet" crossorigin href="/personal-homepage/assets/index-DSVkuEXk.css">
   </head>
   <body>
     <div id="app">
@@ -24,60 +24,55 @@
       <!-- 滚动容器 -->
       <div id="scroll-container">
         <!-- 区域1: 3D展示场景 -->
-        <section id="scene-section" class="scroll-section">
+        <section id="scene-section" class="scroll-section" data-section="hero">
           <div id="canvas-container">
             <canvas id="canvas"></canvas>
           </div>
-          <!-- 向下箭头 -->
-          <div id="scroll-arrow-down" class="scroll-arrow scroll-arrow-down">
-            <svg width="40" height="40" viewBox="0 0 40 40">
-              <path d="M10 15 L20 25 L30 15" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </div>
         </section>
         
-        <!-- 区域2: 个人简介 -->
-        <section id="about-section" class="scroll-section">
-          <!-- 背景遮罩 - 毛玻璃效果 -->
+        <!-- 区域2: 技能展示（Phase 2 占位） -->
+        <section id="skills-section" class="scroll-section" data-section="skills">
           <div class="section-backdrop"></div>
           <div class="section-content">
-            <h2 class="section-title">关于我</h2>
-            <div class="about-content">
-              <p class="about-text">欢迎来到我的个人主页！</p>
-              <p class="about-text">这里将展示个人简介内容...</p>
+            <h2 class="section-title">技术能力</h2>
+            <div class="skills-content">
+              <p class="section-placeholder">技能雷达图、技术栈时间线即将上线...</p>
             </div>
-          </div>
-          <!-- 向上箭头 -->
-          <div id="scroll-arrow-up" class="scroll-arrow scroll-arrow-up">
-            <svg width="40" height="40" viewBox="0 0 40 40">
-              <path d="M10 25 L20 15 L30 25" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </div>
-          <!-- 向下箭头 -->
-          <div id="scroll-arrow-down-2" class="scroll-arrow scroll-arrow-down">
-            <svg width="40" height="40" viewBox="0 0 40 40">
-              <path d="M10 15 L20 25 L30 15" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
           </div>
         </section>
         
         <!-- 区域3: 项目展示 -->
-        <section id="projects-section" class="scroll-section">
-          <!-- 背景遮罩 - 毛玻璃效果 -->
+        <section id="projects-section" class="scroll-section" data-section="projects">
           <div class="section-backdrop"></div>
           <div class="section-content">
             <h2 class="section-title">项目展示</h2>
             <div class="projects-content">
-              <p class="projects-text">这里将展示我的项目作品...</p>
+              <p class="section-placeholder">这里将展示我的项目作品...</p>
             </div>
           </div>
-          <!-- 向上箭头 -->
-          <div id="scroll-arrow-up-2" class="scroll-arrow scroll-arrow-up">
-            <svg width="40" height="40" viewBox="0 0 40 40">
-              <path d="M10 25 L20 15 L30 25" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
+        </section>
+        
+        <!-- 区域4: 关于我 + 联系方式 -->
+        <section id="about-section" class="scroll-section" data-section="about">
+          <div class="section-backdrop"></div>
+          <div class="section-content">
+            <h2 class="section-title">关于我</h2>
+            <div class="about-content">
+              <p class="section-placeholder">欢迎来到我的个人主页！</p>
+              <p class="section-placeholder">个人简介与联系方式即将完善...</p>
+            </div>
           </div>
         </section>
+      </div>
+
+      <!-- 首屏滚动提示（独立于滚动容器，避免被毛玻璃遮挡） -->
+      <div id="scroll-hint" class="scroll-hint">
+        <span class="scroll-hint-text">向下滚动探索</span>
+        <div class="scroll-hint-arrow">
+          <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M6 9 L12 15 L18 9" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
       </div>
     </div>
     

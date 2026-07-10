@@ -12,6 +12,7 @@
   "devDependencies": {
     "@types/three": "^0.184.1",
     "gh-pages": "^6.3.0",
+    "terser": "^5.48.0",
     "typescript": "^7.0.2",
     "vite": "^7.2.4"
   },

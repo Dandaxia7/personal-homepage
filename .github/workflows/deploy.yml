@@ -7,19 +7,10 @@ on:
   workflow_dispatch:  # 允许手动触发
 
 permissions:
-  contents: read
-  pages: write
-  id-token: write
-
-concurrency:
-  group: "pages"
-  cancel-in-progress: false
+  contents: write  # 需要写权限来推送 gh-pages 分支
 
 jobs:
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+  build-and-deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -32,20 +23,23 @@ jobs:
           cache: 'npm'
           cache-dependency-path: three-app/package-lock.json
 
-      - name: Setup Pages
-        uses: actions/configure-pages@v4
-
       - name: Install dependencies
         run: cd three-app && npm ci
 
       - name: Build
         run: cd three-app && npm run build
 
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: three-app/dist
-
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+      - name: Deploy to gh-pages branch
+        run: |
+          cd three-app
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # 将 dist 目录内容推送到 gh-pages 分支
+          cd dist
+          git init
+          git add -A
+          git commit -m "Deploy from GitHub Actions"
+          git branch -M gh-pages
+          git remote add origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+          git push -f origin gh-pages

@@ -55,7 +55,7 @@ export class AvatarScene extends SceneBase {
       this.loadingScreen.updateTip('正在加载 3D 模型...');
       
       await this.model.load(
-        '/chibi_anime_girl_web_preview.glb',
+        `${import.meta.env.BASE_URL}chibi_anime_girl_web_preview_compressed.glb`,
         (percent) => {
           this.loadingScreen.updateProgress(percent);
         }

@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 
 /**
  * 加载进度回调
@@ -11,11 +12,18 @@ export type ProgressCallback = (percent: number) => void;
  */
 export class Model {
   private loader: GLTFLoader;
+  private dracoLoader: DRACOLoader;
   private model: THREE.Group | null = null;
   private mixer: THREE.AnimationMixer | null = null;
 
   constructor() {
     this.loader = new GLTFLoader();
+    
+    // 配置 Draco 解码器
+    this.dracoLoader = new DRACOLoader();
+    // 使用 CDN 托管的 Draco 解码器文件
+    this.dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.6/');
+    this.loader.setDRACOLoader(this.dracoLoader);
   }
 
   /**
@@ -119,5 +127,7 @@ export class Model {
     if (this.mixer) {
       this.mixer.stopAllAction();
     }
+    // 清理 Draco 解码器
+    this.dracoLoader.dispose();
   }
 }

@@ -4,6 +4,7 @@ import { ScrollController } from './controllers/ScrollController';
 import { QuickNav } from './ui/QuickNav';
 import { ScrollHint } from './ui/ScrollHint';
 import { DialogueManager } from './interactions/DialogueManager';
+import { SkillsSection } from './components/sections/SkillsSection';
 
 const canvas = document.getElementById('canvas') as HTMLCanvasElement;
 
@@ -22,15 +23,23 @@ const navigateToSection = (sectionId: string) => {
 const quickNav = new QuickNav(navigateToSection);
 const scrollHint = new ScrollHint();
 
+new SkillsSection((tagName) => {
+  scrollController.scrollToSectionById('projects-section');
+  window.dispatchEvent(new CustomEvent('project-filter', { detail: tagName }));
+});
+
 scrollController.onSectionChange((_index, sectionId) => {
+  const onHero = sectionId === 'scene-section';
+  scene.setHeroInteractionEnabled(onHero);
   quickNav.setActiveSection(sectionId);
   dialogueManager.onSectionChange(sectionId);
-  scrollHint.setVisible(sectionId === 'scene-section');
+  scrollHint.setVisible(onHero);
 });
 
 scene.init().then(() => {
   console.log('场景初始化完成');
   scene.start();
+  scene.setHeroInteractionEnabled(true);
   scene.setOnModelClick(() => dialogueManager.onModelClick());
   dialogueManager.onSceneReady();
 }).catch((error) => {

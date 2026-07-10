@@ -12,6 +12,7 @@ export class ClickHandler {
   private bounceAnimation: BounceAnimation;
   private cooldown: boolean = false;
   private readonly cooldownTime: number = 500; // 冷却时间（毫秒）
+  private enabled = true;
   private onModelClickCallback: (() => void) | null = null;
   private readonly boundOnClick = this.onClick.bind(this);
 
@@ -40,8 +41,7 @@ export class ClickHandler {
    * 点击处理
    */
   private onClick(event: MouseEvent): void {
-    // 检查冷却时间
-    if (this.cooldown) return;
+    if (!this.enabled || this.cooldown) return;
 
     // 计算鼠标位置
     this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
@@ -60,6 +60,14 @@ export class ClickHandler {
 
   setOnModelClick(callback: () => void): void {
     this.onModelClickCallback = callback;
+  }
+
+  enable(): void {
+    this.enabled = true;
+  }
+
+  disable(): void {
+    this.enabled = false;
   }
 
   /**

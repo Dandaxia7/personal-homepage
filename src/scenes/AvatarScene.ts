@@ -124,6 +124,15 @@ export class AvatarScene extends SceneBase {
     this.clickHandler?.setOnModelClick(callback);
   }
 
+  /** 首屏外禁用模型点击，鼠标追踪与眼珠动画保持运行 */
+  setHeroInteractionEnabled(enabled: boolean): void {
+    if (enabled) {
+      this.clickHandler?.enable();
+    } else {
+      this.clickHandler?.disable();
+    }
+  }
+
   /**
    * 清理资源
    */
